@@ -1,0 +1,51 @@
+SELECT
+u.username As 'Usuário',
+c.fullname AS 'Curso',
+cs.name AS 'Módulo',
+CASE
+WHEN m.name = 'assign' THEN (SELECT a1.name FROM prefix_assign a1 WHERE a1.id = cm.instance)
+WHEN m.name = 'assignment' THEN (SELECT a2.name FROM prefix_assignment a2 WHERE a2.id = cm.instance)
+WHEN m.name = 'book' THEN (SELECT a3.name FROM prefix_book a3 WHERE a3.id = cm.instance)
+WHEN m.name = 'chat' THEN (SELECT a4.name FROM prefix_chat a4 WHERE a4.id = cm.instance)
+WHEN m.name = 'choice' THEN (SELECT a5.name FROM prefix_choice a5 WHERE a5.id = cm.instance)
+WHEN m.name = 'data' THEN (SELECT a6.name FROM prefix_data a6 WHERE a6.id = cm.instance)
+WHEN m.name = 'feedback' THEN (SELECT a7.name FROM prefix_feedback a7 WHERE a7.id = cm.instance)
+WHEN m.name = 'folder' THEN (SELECT a8.name FROM prefix_folder a8 WHERE a8.id = cm.instance)
+WHEN m.name = 'forum' THEN (SELECT a9.name FROM prefix_forum a9 WHERE a9.id = cm.instance)
+WHEN m.name = 'glossary' THEN (SELECT a10.name FROM prefix_glossary a10 WHERE a10.id = cm.instance)
+WHEN m.name = 'imscp' THEN (SELECT a11.name FROM prefix_imscp a11 WHERE a11.id = cm.instance)
+WHEN m.name = 'label' THEN (SELECT a12.name FROM prefix_label a12 WHERE a12.id = cm.instance)
+WHEN m.name = 'lesson' THEN (SELECT a13.name FROM prefix_lesson a13 WHERE a13.id = cm.instance)
+WHEN m.name = 'lti' THEN (SELECT a14.name FROM prefix_lti a14 WHERE a14.id = cm.instance)
+WHEN m.name = 'quiz' THEN (SELECT a16.name FROM prefix_quiz a16 WHERE a16.id = cm.instance)
+WHEN m.name = 'page' THEN (SELECT a15.name FROM prefix_page a15 WHERE a15.id = cm.instance)
+WHEN m.name = 'resource' THEN (SELECT a17.name FROM prefix_resource a17 WHERE a17.id = cm.instance)
+WHEN m.name = 'scorm' THEN (SELECT a18.name FROM prefix_scorm a18 WHERE a18.id = cm.instance)
+WHEN m.name = 'survey' THEN (SELECT a19.name FROM prefix_survey a19 WHERE a19.id = cm.instance)
+WHEN m.name = 'url' THEN (SELECT a20.name FROM prefix_url a20 WHERE a20.id = cm.instance)
+WHEN m.name = 'wiki' THEN (SELECT a21.name FROM prefix_wiki a21 WHERE a21.id = cm.instance)
+WHEN m.name = 'workshop' THEN (SELECT a22.name FROM prefix_workshop a22 WHERE a22.id = cm.instance)
+END AS Atividade,
+CASE
+ WHEN cm.completion = 0 THEN 'Nenhum'
+ WHEN cm.completion = 1 THEN 'Manual'
+ WHEN cm.completion = 2 THEN 'Automático'
+END AS 'Tipo de Conclusão',
+CASE
+ WHEN cmc.completionstate = 0 THEN 'Não concluiu'
+ WHEN cmc.completionstate = 1 THEN 'Concluiu'
+ WHEN cmc.completionstate = 2 THEN 'Concluiu'
+ WHEN cmc.completionstate = 3 THEN 'Concluiu'
+ ELSE 'Desconhecido'
+END AS 'Progresso no curso',
+DATE_FORMAT(FROM_UNIXTIME(cmc.timemodified), '%d/%m/%Y') AS 'Data de conclusão'
+FROM prefix_user u
+RIGHT JOIN prefix_course_modules_completion cmc ON cmc.userid = u.id
+JOIN prefix_course_modules cm ON cm.id = cmc.coursemoduleid
+JOIN prefix_course_sections AS cs ON (cs.id = cm.section)
+JOIN prefix_course c ON c.id = cm.course
+JOIN prefix_modules m ON cm.module = m.id
+
+#Filtrando por um curso para testar e não sobrecarregar a plataforma
+
+WHERE c.id = 70
