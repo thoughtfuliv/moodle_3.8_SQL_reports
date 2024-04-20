@@ -1,0 +1,58 @@
+#Inicia chamando os campos de identificação do usuário padrões do Moodle
+
+SELECT DISTINCT u.username AS "Identificação de usuário", u.email AS "E-mail", 
+CASE WHEN u.suspended = 0 THEN 'Ativo' ELSE 'Suspenso' END AS "Status do usuário",
+CONCAT (u.firstname, ' ', u.lastname) AS 'Nome completo', DATE_FORMAT(FROM_UNIXTIME(u.lastaccess), '%d/%m/%Y') as "Último acesso",
+
+#Chamando os campos personalizados do Moodle
+
+up1.data AS "Unidade", 
+up2.data AS "Filial",
+up3.data AS "Diretoria",
+up4.data AS "Business Partner",
+up5.data AS "Seção",
+up6.data AS "Função",
+up7.data AS "Cargo",
+up8.data AS "Tipo de Negócio",
+up9.data AS "Data de Admissão",
+up10.data AS "Situação",
+up11.data AS "Regional",
+up12.data AS "Tempo de Empresa",
+up13.data AS "Gestor Imediato",
+up14.data AS "Cor",
+up15.data AS "Colaborador PCD",
+
+
+#Chamando os dados dos cursos do Moodle
+
+c.id AS "ID do curso", c.idnumber AS "ID externo", c.fullname AS "Curso", c.shortname AS "Nome breve do curso", ca.name AS "Categoria",
+CASE WHEN c.visible = 0 THEN 'Oculto' ELSE 'Visível' END AS "Status do curso", 
+DATE_FORMAT(FROM_UNIXTIME(ue.timecreated), '%d/%m/%Y') AS "Data de início no curso", DATE_FORMAT(FROM_UNIXTIME(cc.timecompleted), '%d/%m/%Y') AS "Data de conclusão", 
+CASE WHEN cc.timecompleted IS NOT NULL THEN 'Concluído' ELSE 'Pendente' END AS "Status de conclusão"
+
+#Definindo as  fontes
+
+FROM prefix_user u
+JOIN prefix_user_enrolments ue ON ue.userid = u.id
+JOIN prefix_enrol e ON e.id = ue.enrolid
+JOIN prefix_course c ON c.id = e.courseid
+JOIN prefix_course_categories ca ON ca.id = c.category
+LEFT JOIN prefix_course_completions cc ON cc.userid = u.id AND cc.course = c.id
+LEFT JOIN prefix_user_info_data up1 ON u.id = up1.userid AND up1.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Unidade')
+LEFT JOIN prefix_user_info_data up2 ON u.id = up2.userid AND up2.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Filial')
+LEFT JOIN prefix_user_info_data up3 ON u.id = up3.userid AND up3.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Diretoria')
+LEFT JOIN prefix_user_info_data up4 ON u.id = up4.userid AND up4.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Business Partner')
+LEFT JOIN prefix_user_info_data up5 ON u.id = up5.userid AND up5.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Seção')
+LEFT JOIN prefix_user_info_data up6 ON u.id = up6.userid AND up6.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Função')
+LEFT JOIN prefix_user_info_data up7 ON u.id = up7.userid AND up7.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Cargo')
+LEFT JOIN prefix_user_info_data up8 ON u.id = up8.userid AND up8.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Tipo de Negócio')
+LEFT JOIN prefix_user_info_data up9 ON u.id = up9.userid AND up9.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Data de Admissão')
+LEFT JOIN prefix_user_info_data up10 ON u.id = up10.userid AND up10.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Situação')
+LEFT JOIN prefix_user_info_data up11 ON u.id = up11.userid AND up11.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Regional')
+LEFT JOIN prefix_user_info_data up12 ON u.id = up12.userid AND up12.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Tempo de Empresa')
+LEFT JOIN prefix_user_info_data up13 ON u.id = up13.userid AND up13.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Gestor Imediato')
+LEFT JOIN prefix_user_info_data up14 ON u.id = up14.userid AND up14.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Cor')
+LEFT JOIN prefix_user_info_data up15 ON u.id = up15.userid AND up15.fieldid = (SELECT id FROM prefix_user_info_field WHERE shortname = 'Colaborador PCD')
+JOIN prefix_context          AS ctx ON c.id         = ctx.instanceid
+JOIN prefix_role_assignments AS ra  ON ra.contextid = ctx.id
+JOIN prefix_role AS r ON ra.roleid = r.id 
