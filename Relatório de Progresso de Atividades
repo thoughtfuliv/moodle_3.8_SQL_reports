@@ -48,7 +48,3 @@ JOIN prefix_course_modules cm ON cm.id = cmc.coursemoduleid
 JOIN prefix_course_sections AS cs ON (cs.id = cm.section)
 JOIN prefix_course c ON c.id = cm.course
 JOIN prefix_modules m ON cm.module = m.id
-
-#Filtrando por um curso para testar e não sobrecarregar a plataforma
-
-WHERE c.id = 70
