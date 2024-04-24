@@ -25,6 +25,9 @@ WHEN m.name = 'survey' THEN (SELECT a19.name FROM prefix_survey a19 WHERE a19.id
 WHEN m.name = 'url' THEN (SELECT a20.name FROM prefix_url a20 WHERE a20.id = cm.instance)
 WHEN m.name = 'wiki' THEN (SELECT a21.name FROM prefix_wiki a21 WHERE a21.id = cm.instance)
 WHEN m.name = 'workshop' THEN (SELECT a22.name FROM prefix_workshop a22 WHERE a22.id = cm.instance)
+WHEN m.name = 'smtpdfprotect' THEN (SELECT a23.name FROM prefix_smtpdfprotect a23 WHERE a23.id = cm.instance)
+WHEN m.name = 'googlemeet' THEN (SELECT a24.name FROM prefix_googlemeet a24 WHERE a24.id = cm.instance)
+WHEN m.name = 'attendance' THEN (SELECT a25.name FROM prefix_attendance a25 WHERE a25.id = cm.instance)
 END AS Atividade,
 CASE
  WHEN cm.completion = 0 THEN 'Nenhum'
